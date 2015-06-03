@@ -6,7 +6,7 @@ clean-test:
 	rm -rf cover/
 
 test:
-	python setup.py test
+	nosetests --verbosity 2 --with-doctest --doctest-extension=rst alignme
 
 test-all:
 	tox
