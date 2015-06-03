@@ -20,3 +20,9 @@ class TestIntronWasher(unittest.TestCase):
         washer = IntronWasher(self.seq_record)
         result = washer.sequence_string
         self.assertEqual(expected, result)
+
+    def test_getting_orf(self):
+        expected = 'AATTTTCAGGTGGCACTTGAAGAATTAGGTGCAGACTTCAATCAAGACTGGAAAGGTTTCCAGCAGGCCTGCATCAAAGCTTTATTGAAAGAAGCCAAAGAAAAG'
+        washer = IntronWasher(self.seq_record)
+        result = washer.identify_orf()
+        self.assertEqual(expected, result)
