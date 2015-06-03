@@ -13,9 +13,7 @@ API
 
 How to remove intron from a sequence:
 
-.. doctest::
-
-    >>> from alignme.utils import IntronWasher
-    >>> washer = IntronWasher()
-    >>> washer.clean
+    >>> from utils import IntronWasher
+    >>> washer = IntronWasher('hola')
+    >>> washer.mystring
     'hola'
