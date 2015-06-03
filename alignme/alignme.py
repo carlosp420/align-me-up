@@ -21,6 +21,13 @@ def create_parser():
 
 def get_started(args):
     split_file_by_gene(args)
+    # for each file
+    #     split by specimen in batches
+    #     for each batch
+    #         if sequence is genomic, strip introns
+    #     for each bach
+    #         do consensus
+    #     align sequences in file
 
 
 def split_file_by_gene(args):

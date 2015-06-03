@@ -1,3 +1,6 @@
+doctest:
+	sphinx-build -b doctest -d docs/build/doctrees docs/source docs/build/doctest
+
 clean-test:
 	rm -fr .tox/
 	rm -f .coverage

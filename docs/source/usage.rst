@@ -7,3 +7,15 @@ Run from the command line:
 
     python alignme.py -i input_file.fasta
 
+
+API
+---
+
+How to remove intron from a sequence:
+
+.. doctest::
+
+    >>> from alignme.utils import IntronWasher
+    >>> washer = IntronWasher()
+    >>> washer.clean
+    'hola'
