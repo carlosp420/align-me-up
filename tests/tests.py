@@ -21,4 +21,4 @@ class TestAlignme(unittest.TestCase):
     def test_get_genes_from_file(self):
         expected = 95
         result = alignme.get_genes_from_file(self.fasta_file)
-        self.assertEqual(expected, result)
+        self.assertEqual(expected, len(result))

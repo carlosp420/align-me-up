@@ -4,6 +4,8 @@ __author__ = 'carlosp420'
 
 import argparse
 
+from Bio import SeqIO
+
 
 def create_parser():
     description = "Take a FASTA file and generate alignments based on gene and consensus sequences for same gene and same individual."
@@ -26,8 +28,12 @@ def split_file_by_gene(args):
 
 
 def get_genes_from_file(filename):
-    genes = []
-    print(filename)
+    genes = set()
+    for seq_record in SeqIO.parse(filename, 'fasta'):
+        id = seq_record.id
+        id = id.split('-')
+        gen = id[0]
+        genes.add(gen)
     return genes
 
 
