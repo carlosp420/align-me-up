@@ -17,7 +17,18 @@ def create_parser():
 
 
 def get_started(args):
-    print(args)
+    split_file_by_gene(args)
+
+
+def split_file_by_gene(args):
+    filename = args.fasta_file
+    genes = get_genes_from_file(filename)
+
+
+def get_genes_from_file(filename):
+    genes = []
+    print(filename)
+    return genes
 
 
 def main():
