@@ -14,6 +14,3 @@ API
 How to remove intron from a sequence:
 
     >>> from utils import IntronWasher
-    >>> washer = IntronWasher('hola')
-    >>> washer.mystring
-    'hola'
