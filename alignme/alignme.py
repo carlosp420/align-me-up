@@ -3,6 +3,7 @@
 __author__ = 'carlosp420'
 
 import argparse
+import os
 
 from Bio import SeqIO
 
@@ -24,17 +25,26 @@ def get_started(args):
 
 def split_file_by_gene(args):
     filename = args.fasta_file
-    genes = get_genes_from_file(filename)
-
-
-def get_genes_from_file(filename):
-    genes = set()
     for seq_record in SeqIO.parse(filename, 'fasta'):
-        id = seq_record.id
-        id = id.split('-')
-        gen = id[0]
-        genes.add(gen)
-    return genes
+        gene = get_gene_from_fasta_id(seq_record.id)
+        target_filename = make_filename_for_gene(gene)
+        if gene in seq_record.id:
+            with open(target_filename, 'a') as handle:
+                handle.write('>' + seq_record.id + '\n' + str(seq_record.seq) + '\n')
+
+
+def get_gene_from_fasta_id(id):
+    id = id.split('-')
+    gene = id[0]
+    return gene
+
+
+def make_filename_for_gene(gene):
+    target_filename = "gene_{}.fasta".format(gene)
+    if not os.path.isfile(target_filename):
+        with open(target_filename, 'w') as handle:
+            handle.write('')
+    return target_filename
 
 
 def main():

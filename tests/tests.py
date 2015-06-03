@@ -18,7 +18,10 @@ class TestAlignme(unittest.TestCase):
             break
         self.assertEqual(105, len(seq))
 
-    def test_get_genes_from_file(self):
-        expected = 95
-        result = alignme.get_genes_from_file(self.fasta_file)
-        self.assertEqual(expected, len(result))
+    def test_get_gene_from_fasta_id(self):
+        my_string = 'BGIBMGA010002-TA-NW_G001_gi|440271108|gb|AHIO01003419.1|:1071-1175 NW_G001 sequence homologous to BGIBMGA010002-TA:557-591'
+        expected = 'BGIBMGA010002'
+        result = alignme.get_gene_from_fasta_id(my_string)
+        self.assertEqual(expected, result)
+
+
