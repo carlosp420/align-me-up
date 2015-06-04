@@ -1,5 +1,8 @@
 # my working files
 gene*fasta
+*fasta
+assembly_velvet*sh
+alignme/test
 
 # Created by .ignore support plugin (hsz.mobi)
 ### Python template

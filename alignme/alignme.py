@@ -24,9 +24,9 @@ def get_started(args):
     # for each file
     #     split by specimen in batches
     #     for each batch
-    #         if sequence is genomic, strip introns
+    #         if sequence is genomic,
     #     for each bach
-    #         do consensus
+    #         do consensus, assembly
     #     align sequences in file
 
 

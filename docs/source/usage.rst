@@ -11,6 +11,9 @@ Run from the command line:
 API
 ---
 
-How to remove intron from a sequence:
+How to get consensus sequences:
 
-    >>> from utils import IntronWasher
+    >>> from utils import Assembler
+    >>> list_of_seq_records = []
+    >>> assembler = Assembler(list_of_seq_records)
+    >>> # returns consensus sequence

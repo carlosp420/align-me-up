@@ -12,6 +12,8 @@ alignme
 Take a FASTA file and generate alignments based on gene and consensus sequences for same gene and 
 same individual.
 
+All the sequences will be in the same direction and will start from codon 1.
+
 Usage
 -----
 
