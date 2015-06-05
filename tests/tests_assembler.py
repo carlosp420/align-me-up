@@ -5,9 +5,7 @@ import unittest
 from Bio import SeqIO
 
 from alignme.utils import Assembler
-
-
-SETTINGS = 'testing'
+from alignme import BASEDIR
 
 
 class TestAssembler(unittest.TestCase):
@@ -21,7 +19,7 @@ class TestAssembler(unittest.TestCase):
     def test_downloading_velvet_scripts(self):
         self.assembler.get_velvet_scripts()
 
-        with open('assembly_velvet.sh', 'r') as handle:
+        with open(os.path.join(BASEDIR, 'alignme', 'assembly_velvet.sh'), 'r') as handle:
             script_content = handle.read()
 
         self.assertTrue('fastq' not in script_content)
@@ -29,6 +27,11 @@ class TestAssembler(unittest.TestCase):
     def test_velvet_step1(self):
         result = self.assembler.velvet_step1()
         self.assertIsNotNone(result)
+
+    def test_get_velvet_params(self):
+        output = self.assembler.velvet_step1()
+        result = self.assembler.get_velvet_params(output)
+        self.assertEqual('', result)
 
     def tearDown(self):
         try:

@@ -43,7 +43,7 @@ class Assembler(object):
         self.filename = self._write_to_file()
 
     def _write_to_file(self):
-        filename = '{}.fasta'.format(str(uuid.uuid4()))
+        filename = '{}.fasta'.format(os.path.join(BASEDIR, str(uuid.uuid4())))
         SeqIO.write(self.list_of_seq_records, filename, "fasta")
         return filename
 
@@ -54,7 +54,7 @@ class Assembler(object):
         self.get_velvet_scripts()
 
         output = self.velvet_step1()
-        filter3_params = self.get_velvet_params(output)
+        velvet_params = self.get_velvet_params(output)
 
         best_input_kmer = self.guess_best_kmer(output)
         command = "bash assembly_velvet2.sh " + best_input_kmer[0] + ".fastq "
@@ -68,6 +68,19 @@ class Assembler(object):
                 os.rename("test/contigs.fa", filename)
                 print("Assembled sequence has been saved as file " + filename)
 
+    def get_velvet_scripts(self):
+        if not os.path.isfile(os.path.join(BASEDIR, 'alignme', 'assembly_velvet.sh')):
+            # downloading scripts to local folder
+            r = requests.get("https://raw.github.com/carlosp420/PyPhyloGenomics/master/assembly_velvet.sh")
+            f = open(os.path.join(BASEDIR, 'alignme', 'assembly_velvet.sh'), 'w')
+            f.write(r.content.decode('utf-8').replace("fastq", "fasta"))
+            f.close()
+
+            r = requests.get("https://raw.github.com/carlosp420/PyPhyloGenomics/master/assembly_velvet2.sh")
+            f = open(os.path.join(BASEDIR, 'alignme', 'assembly_velvet2.sh'), 'w')
+            f.write(r.content.decode('utf-8').replace("fastq", "fasta"))
+            f.close()
+
     def velvet_step1(self):
         command = "bash {} {}".format(
             os.path.join(BASEDIR, 'alignme', 'assembly_velvet.sh'),
@@ -76,23 +89,10 @@ class Assembler(object):
         output = subprocess.check_output(command, shell=True)
         return output
 
-    def get_velvet_scripts(self):
-        if not os.path.isfile('assembly_velvet.sh'):
-            # downloading scripts to local folder
-            r = requests.get("https://raw.github.com/carlosp420/PyPhyloGenomics/master/assembly_velvet.sh")
-            f = open("assembly_velvet.sh", "w")
-            f.write(r.content.decode('utf-8').replace("fastq", "fasta"))
-            f.close()
-
-            r = requests.get("https://raw.github.com/carlosp420/PyPhyloGenomics/master/assembly_velvet2.sh")
-            f = open("assembly_velvet2.sh", "w")
-            f.write(r.content.decode('utf-8').replace("fastq", "fasta"))
-            f.close()
-
     def get_velvet_params(self, output):
         # @input: output from runing velvet assembly on all Kmer values
         # @output: a dictionary with the parameters: kmer, nodes, n50, max, total
-        output = output.split("\n")
+        output = str(output).split("\n")
         mydict = dict()
         kmer = 31
         for line in output:
@@ -115,8 +115,8 @@ class Assembler(object):
                 lista['total'] = total
 
                 mydict[kmer] = lista
-                kmer = kmer - 2
-        return(mydict)
+            kmer -= 2
+        return mydict
 
     def guess_best_kmer(self, filter3_params):
         # ----------------------------------------------------------------------------
