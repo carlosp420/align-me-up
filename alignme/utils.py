@@ -92,10 +92,11 @@ class Assembler(object):
     def get_velvet_params(self, output):
         # @input: output from runing velvet assembly on all Kmer values
         # @output: a dictionary with the parameters: kmer, nodes, n50, max, total
-        output = str(output).split("\n")
+        lines = output.decode('utf-8')
+        lines = lines.split("\n")
         mydict = dict()
         kmer = 31
-        for line in output:
+        for line in lines:
             if "n50" in line:
                 lista = dict()
                 nodes = re.search("(\d+)\snodes", line)
@@ -115,7 +116,7 @@ class Assembler(object):
                 lista['total'] = total
 
                 mydict[kmer] = lista
-            kmer -= 2
+                kmer -= 2
         return mydict
 
     def guess_best_kmer(self, filter3_params):

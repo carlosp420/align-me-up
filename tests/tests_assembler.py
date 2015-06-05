@@ -31,7 +31,7 @@ class TestAssembler(unittest.TestCase):
     def test_get_velvet_params(self):
         output = self.assembler.velvet_step1()
         result = self.assembler.get_velvet_params(output)
-        self.assertEqual('', result)
+        self.assertTrue(29 in result)
 
     def tearDown(self):
         try:
