@@ -55,11 +55,9 @@ class Assembler(object):
 
         output = self.velvet_step1()
         velvet_params = self.get_velvet_params(output)
+        best_input_kmer = self.guess_best_kmer(velvet_params)
 
-        best_input_kmer = self.guess_best_kmer(output)
-        command = "bash assembly_velvet2.sh " + best_input_kmer[0] + ".fastq "
-        command += str(best_input_kmer[1])
-        assembly = subprocess.check_call(command, shell=True)
+        assembly = self.velvet_step2(best_input_kmer)
 
         if assembly == 0:
             if self.count_reads("test/contigs.fa", "fasta") > 0:
@@ -89,10 +87,12 @@ class Assembler(object):
         output = subprocess.check_output(command, shell=True)
         return output
 
-    def get_velvet_params(self, output):
-        # @input: output from runing velvet assembly on all Kmer values
-        # @output: a dictionary with the parameters: kmer, nodes, n50, max, total
-        lines = output.decode('utf-8')
+    def get_velvet_params(self, input):
+        """
+        :param input: data from runing velvet assembly on all Kmer values
+        :return: a dictionary with the parameters: kmer, nodes, n50, max, total
+        """
+        lines = input.decode('utf-8')
         lines = lines.split("\n")
         mydict = dict()
         kmer = 31
@@ -119,28 +119,37 @@ class Assembler(object):
                 kmer -= 2
         return mydict
 
-    def guess_best_kmer(self, filter3_params):
-        # ----------------------------------------------------------------------------
-        # @input: params from two runs of velvet on all Kmer values
-        #            these inputs are dictionaries
-        # @output: a list containing:
-        #            - the filtered file number either filter2 or filter3
-        #            - the best kmer value found by comparison of the two
+    def guess_best_kmer(self, velvet_params):
+        """
+        :param velvet_params: params from two runs of velvet on all Kmer values these inputs are dictionaries.
+        :return: a list containing:
+                 - the filtered file number either filter2 or filter3
+                 - the best kmer value found by comparison of the two
+        """
         n50 = []
-        for i in filter3_params:
-            n50.append(int(filter3_params[i]['n50']))
+        for i in velvet_params:
+            n50.append(int(velvet_params[i]['n50']))
             n50.sort()
             n50.reverse()
-        filter3_n50 = n50[0]
+        filtered = n50[0]
 
-        for i in filter3_params:
-            if filter3_params[i]['n50'] == str(filter3_n50):
-                return(["filter3", i])
+        for i in velvet_params:
+            if velvet_params[i]['n50'] == str(filtered):
+                return(i)
+
+    def velvet_step2(self, best_input_kmer):
+        command = "bash {} test {} .fasta {}".format(
+            os.path.join(BASEDIR, 'alignme', 'assembly_velvet2.sh'),
+            os.path.join(BASEDIR, self.filename),
+            str(best_input_kmer),
+        )
+        assembly = subprocess.check_call(command, shell=True)
+        return assembly
 
     def count_reads(self, fastqFile, file_format):
-        '''
-        \* *Internal function* \*
-        '''
+        """
+        Internal function
+        """
         count = 0
         for seq_record in SeqIO.parse(fastqFile, file_format):
             count = count + 1
@@ -148,4 +157,3 @@ class Assembler(object):
 
     def get_statistics_using_oases(self):
         pass
-
