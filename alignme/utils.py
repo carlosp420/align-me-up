@@ -10,6 +10,8 @@ import uuid
 import requests
 from Bio import SeqIO
 
+from alignme import BASEDIR
+
 
 class IntronWasher(object):
     """Input a FASTA sequence object and returns it after removing any intron if necessary.
@@ -51,14 +53,10 @@ class Assembler(object):
         """
         self.get_velvet_scripts()
 
-        command = "bash assembly_velvet.sh {}".format(self.filename)
-        print(command)
-        filter3_output = subprocess.check_output(command, shell=True)
-        print(filter3_output)
-        filter3_params = self.get_velvet_params(filter3_output)
-        print(filter3_params)
+        output = self.velvet_step1()
+        filter3_params = self.get_velvet_params(output)
 
-        best_input_kmer = self.guess_best_kmer(filter3_params)
+        best_input_kmer = self.guess_best_kmer(output)
         command = "bash assembly_velvet2.sh " + best_input_kmer[0] + ".fastq "
         command += str(best_input_kmer[1])
         assembly = subprocess.check_call(command, shell=True)
@@ -69,6 +67,14 @@ class Assembler(object):
                 filename = re.sub(".fastq$", "", fastq_file) + "_assembled.fasta"
                 os.rename("test/contigs.fa", filename)
                 print("Assembled sequence has been saved as file " + filename)
+
+    def velvet_step1(self):
+        command = "bash {} {}".format(
+            os.path.join(BASEDIR, 'alignme', 'assembly_velvet.sh'),
+            os.path.join(BASEDIR, self.filename)
+        )
+        output = subprocess.check_output(command, shell=True)
+        return output
 
     def get_velvet_scripts(self):
         if not os.path.isfile('assembly_velvet.sh'):
